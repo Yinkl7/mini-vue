@@ -85,11 +85,11 @@ describe("effect", () => {
     obj.num = 12
     expect(dummy).toBe(12)
     stop(runner)
-    obj.num = 14
+    obj.num++
     expect(dummy).toBe(12)
 
     runner()
-    expect(dummy).toBe(14)
+    expect(dummy).toBe(13)
   })
 
   it("onStop", () => {

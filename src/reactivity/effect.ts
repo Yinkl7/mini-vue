@@ -1,5 +1,7 @@
 import { extend } from '../shared'
 
+let activeEffect;
+let shouldTrack;
 class ReactiveEffect {
   private _fn: any;
   // deps 是保存当前effect的Set对象
@@ -13,8 +15,19 @@ class ReactiveEffect {
   }
 
   run() {
+    // activeEffect = this
+    // return this._fn()
+    // stop的情况
+    if(!this.active) {
+      return this._fn()
+    }
+    // 没有stop的情况
+    shouldTrack = true
     activeEffect = this
-    return this._fn()
+    // 执行 this._fn() 时做依赖收集
+    const result = this._fn()
+    shouldTrack = false
+    return result
   }
 
   stop() {
@@ -32,11 +45,16 @@ function cleanUpEffect(effect) {
   effect.deps.forEach((dep: any) => {
     dep.delete(effect)
   })
+  effect.deps.length = 0
 }
 
 let targetMap = new WeakMap()
+
 export function track(target, key) {
   // target => key => dep
+
+  if(!isTracking()) return
+
   let depsMap = targetMap.get(target)
   if(!depsMap) {
     depsMap = new Map()
@@ -49,13 +67,18 @@ export function track(target, key) {
     depsMap.set(key, dep)
   }
 
-  // 不使用 effect 函数时，不存在activeEffect
-  if(!activeEffect) return
+  if(dep.has(activeEffect)) return
   // 添加effect
   dep.add(activeEffect)
 
   // 保存所有包含当前effect的dep
   activeEffect.deps.push(dep)
+}
+
+function isTracking() {
+  // activeEffect: 不使用 effect 函数时，不存在activeEffect
+  // shouldTrack: 不应该被触发依赖
+  return shouldTrack && activeEffect !== undefined
 }
 
 export function trigger(target, key) {
@@ -70,7 +93,7 @@ export function trigger(target, key) {
   }
 }
 
-let activeEffect;
+
 export function effect(fn, options: any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler)
   // _effect.onStop = options.onStop
