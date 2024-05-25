@@ -31,7 +31,7 @@ class ReactiveEffect {
   }
 
   stop() {
-    if(true) {
+    if(this.active) {
       cleanUpEffect(this)
       if(this.onStop) {
         this.onStop()
@@ -67,6 +67,10 @@ export function track(target, key) {
     depsMap.set(key, dep)
   }
 
+  trackEffects(dep)
+}
+
+export function trackEffects(dep) {
   if(dep.has(activeEffect)) return
   // 添加effect
   dep.add(activeEffect)
@@ -75,7 +79,7 @@ export function track(target, key) {
   activeEffect.deps.push(dep)
 }
 
-function isTracking() {
+export function isTracking() {
   // activeEffect: 不使用 effect 函数时，不存在activeEffect
   // shouldTrack: 不应该被触发依赖
   return shouldTrack && activeEffect !== undefined
@@ -84,6 +88,17 @@ function isTracking() {
 export function trigger(target, key) {
   let depsMap = targetMap.get(target)
   let dep = depsMap.get(key)
+  // for(const effect of dep) {
+  //   if(effect.scheduler) {
+  //     effect.scheduler()
+  //   } else {
+  //     effect.run()
+  //   }
+  // }
+  triggerEffects(dep)
+}
+
+export function triggerEffects(dep) {
   for(const effect of dep) {
     if(effect.scheduler) {
       effect.scheduler()
@@ -92,7 +107,6 @@ export function trigger(target, key) {
     }
   }
 }
-
 
 export function effect(fn, options: any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler)
