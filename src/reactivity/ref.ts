@@ -10,6 +10,7 @@ class RefImpl {
   private _value: any;
   public dep;
   private _rawValue: any;
+  public __v_isRef = true
   constructor(value) {
     this._rawValue = value
     // 判断是否是对象
@@ -44,4 +45,27 @@ function trackRefVal(ref) {
 
 export function ref(value) {
   return new RefImpl(value)
+}
+
+export function isRef(ref) {
+  return !!ref.__v_isRef
+}
+
+export function unRef(ref) {
+  return isRef(ref) ? ref.value : ref
+}
+
+export function proxyRef(object) {
+  return new Proxy(object, {
+    get(target, key) {
+      return unRef(Reflect.get(target, key))
+    },
+    set(target, key, value) {
+      if(isRef(target[key]) && !isRef(value)) {
+        return (target[key].value = value)
+      } else {
+        return Reflect.set(target, key, value)
+      }
+    }
+  })
 }
