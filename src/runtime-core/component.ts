@@ -1,4 +1,4 @@
-import { isObject } from "../shared"
+import { isObject } from "../shared/index"
 
 export function createComponentInstance(vnode) {
   const component = {
@@ -41,8 +41,8 @@ function handleSetupResult(instance, setupResult: any) {
 function finishComponentSetup(instance: any) {
   const Component = instance.type
 
-  if(Component.render) {
+  // if(Component.render) {
     instance.render = Component.render
-  }
+  // }
 }
 
