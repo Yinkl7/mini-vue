@@ -23,16 +23,16 @@ function processElement(vnode, container) {
   mountElement(vnode, container)
 }
 
-function mountComponent(vnode: any, container) {
-  const instance = createComponentInstance(vnode)
-
+function mountComponent(initialVNode: any, container) {
+  const instance = createComponentInstance(initialVNode)
+  // 将数据添加到instance上
   setupComponent(instance)
 
-  setupRenderEffect(instance, container)
+  setupRenderEffect(instance, initialVNode, container)
 }
 
 function mountElement(vnode: any, container: any) {
-  const el = document.createElement(vnode.type)
+  const el = (vnode.el = document.createElement(vnode.type))
   const { children, props } = vnode
 
   // todo children会有两种类型 string和array
@@ -56,8 +56,14 @@ function mountChildren(vnode, container) {
   })
 }
 
-function setupRenderEffect(instance: any, container) {
-  const subTree = instance.render()
+// 
+function setupRenderEffect(instance: any, initialVNode, container) {
+  const { proxy } = instance
+  // subTree：组件内容的vnode对象
+  const subTree = instance.render.call(proxy)
 
   patch(subTree, container)
+
+  // 对el进行赋值
+  initialVNode.el = subTree.el
 }

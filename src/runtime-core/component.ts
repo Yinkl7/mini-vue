@@ -1,9 +1,11 @@
 import { isObject } from "../shared/index"
+import { PublicInstanceHandlers } from "./componentPublicInstance"
 
 export function createComponentInstance(vnode) {
   const component = {
     vnode,
-    type: vnode.type
+    type: vnode.type,
+    setupState: {},
   }
 
   return component
@@ -20,6 +22,9 @@ export function setupComponent(instance) {
 function setupStatefulComponent(instance: any) {
   const Component = instance.vnode.type
 
+  // 生成组件代理对象，访问this时直接访问这个代理对象
+  instance.proxy = new Proxy({ _: instance}, PublicInstanceHandlers)
+
   const { setup } = Component
   
   if(setup) {
@@ -35,6 +40,7 @@ function handleSetupResult(instance, setupResult: any) {
     instance.setupState = setupResult
   }
 
+  // 将render函数添加到组件实例上
   finishComponentSetup(instance)
 }
 
