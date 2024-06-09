@@ -1,6 +1,9 @@
 import { isObject } from "../shared/index"
 import { ShapeFlags } from "../shared/shapeFlags"
 
+export const Fragment = Symbol('Fragment')
+export const Text = Symbol('Text')
+
 export function createVnode(type, props?, children?) {
   const vnode = {
     type, 
@@ -28,4 +31,8 @@ export function createVnode(type, props?, children?) {
 
 function getShapeFlag(type: any) {
   return typeof type === 'string' ? ShapeFlags.ELEMENT : ShapeFlags.STATEFUL_COMPONENT
+}
+
+export function createTextVnode(text: string) {
+  return createVnode(Text, {}, text)
 }
