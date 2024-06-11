@@ -1,3 +1,4 @@
+import { proxyRef } from "../reactivity"
 import { shallowReadonly } from "../reactivity/reactive"
 import { isObject } from "../shared"
 import { emit } from "./componentEmit"
@@ -14,6 +15,8 @@ export function createComponentInstance(vnode, parent) {
     slots: {},
     provides: parent ? parent.provides : {},
     parent,
+    isMounted: false,
+    subTree: {},
     emit: () => {}
   }
 
@@ -52,7 +55,7 @@ function handleSetupResult(instance, setupResult: any) {
   // setup 返回值可能是function或者是object
   // todo function
   if(isObject(setupResult)) {
-    instance.setupState = setupResult
+    instance.setupState = proxyRef(setupResult)
   }
 
   // 将render函数添加到组件实例上
