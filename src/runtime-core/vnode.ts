@@ -1,4 +1,4 @@
-import { isObject } from "../shared/index"
+import { isObject } from "../shared"
 import { ShapeFlags } from "../shared/shapeFlags"
 
 export const Fragment = Symbol('Fragment')
