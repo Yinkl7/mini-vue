@@ -20,7 +20,7 @@ export function createComponentInstance(vnode, parent) {
     emit: () => {}
   }
 
-  console.log('createComponentInstance: ', parent, component)
+  // console.log('createComponentInstance: ', parent, component)
 
   component.emit = emit.bind(null, component) as any
 
