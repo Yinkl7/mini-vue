@@ -15,8 +15,8 @@ export const App = {
       {},
       [
         h('div', {}, 'App'),
-        h(ArrayToText),
-        // h(ArrayToArray),
+        // h(ArrayToText),
+        h(ArrayToArray),
         // h(TextToArray),
         // h(TextToText),
       ]
