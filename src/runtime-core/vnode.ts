@@ -9,6 +9,8 @@ export function createVnode(type, props?, children?) {
     type, 
     props, 
     children,
+    // 组件实例
+    component: null,
     shapeFlag: getShapeFlag(type),
     key: props && props.key,
     el: null
