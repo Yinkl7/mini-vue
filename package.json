@@ -2,11 +2,9 @@
   "name": "mini-vue",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
-  "main": "lib/guide-mini-vue.cjs.js",
   "scripts": {
     "test": "jest",
-    "build": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.mjs"
   },
   "license": "MIT",
   "devDependencies": {
