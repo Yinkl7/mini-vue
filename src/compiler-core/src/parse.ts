@@ -26,7 +26,6 @@ function parseChildren(context, ancestors) {
       node = parseInterpolation(context)
     } else if(s.startsWith('<')) {
       if(/[a-z]/i.test(s[1])) {
-        console.log('parse element======== ')
         node = parseElement(context, ancestors)
       }
     }
@@ -96,7 +95,7 @@ function parseElement(context, ancestors) {
   element.children = parseChildren(context, ancestors)
   ancestors.pop()
 
-  console.log('--------------- ', context.source)
+  // console.log('--------------- ', context.source)
   if(startsWithEndTagOpen(context.source, element.tag)) {
     parseTag(context, TagType.END)
   } else {
@@ -116,7 +115,6 @@ function parseTag(context, type: TagType) {
    * 2、删除解析的代码
    */
   const match: any = /^<\/?([a-z]*)/i.exec(context.source)
-  console.log("match========== ", match)
   const tag = match[1]
   // 删除 <div
   advanceBy(context, match[0].length)
